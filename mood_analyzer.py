@@ -50,9 +50,23 @@ class MoodAnalyzer:
         Ideas to improve:
           - Remove punctuation
           - Handle simple emojis separately (":)", ":-(", "🥲", "😂")
-          - Normalize repeated characters ("soooo" -> "soo")
+          - Normalize repeated characters ("baaad" -> "bad")
         """
+
+        emojiDict = {
+            ":)": "happy",
+            ":-)": "happy",
+            ":(": "sad",
+            ":-(": "sad",
+            "😂": "happy",
+            "🥲": "sad"
+        }
+        for emoji, word in emojiDict.items():
+            text = text.replace(emoji, f" {word} ")
+        cleaned = text.translate(str.maketrans("", "", "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"))
+        cleaned = re.sub(r'\s+', ' ', cleaned)  # Replace multiple spaces with a single space
         cleaned = text.strip().lower()
+        cleaned = re.sub(r'(.)\1{2,}', r'\1', cleaned)  # Normalize repeated characters (e.g., "baaad" -> "bad")
         tokens = cleaned.split()
 
         return tokens
@@ -80,7 +94,8 @@ class MoodAnalyzer:
         #   2. Loop over the tokens.
         #   3. Increase the score for positive words, decrease for negative words.
         #   4. Return the total score.
-        #
+        
+        
         # Hint: if you implement negation, you may want to look at pairs of tokens,
         # like ("not", "happy") or ("never", "fun").
         pass
